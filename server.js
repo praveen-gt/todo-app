@@ -1,6 +1,17 @@
 let express = require('express')
 
+let mongodb = require('mongodb')
+
 let app = express()
+
+let db
+
+let connectionString = 'mongodb+srv://todoAppUser:9999123001@cluster0.d3xmx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+
+mongodb.connect(connectionString, {useNewUrlParser: true}, (function(err, client) {
+  db = client.db()
+  app.listen(3000)
+}))
 
 app.use(express.urlencoded({extended: false}))
 
@@ -58,9 +69,11 @@ app.get('/', (function(req, res) {
     `)
 }))
 
-app.post("/create-item", (function(req, res) {
-    console.log(req.body.item)
+app.post("/create-item", (function(req, res) 
+ {
+   db.collection('items').insertOne({text: req.body.item}, (function() {
     res.send("Thank you for this course")
+   }))
 }))
 
-app.listen(3000)
+
